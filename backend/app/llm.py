@@ -17,7 +17,7 @@ context, say "I don't have enough information in the uploaded document to answer
 that." Do not make up information."""
 
 
-def stream_answer(query: str, top_k: int = 3) -> Iterator[str]:
+def stream_answer(query: str, history: list, top_k: int = 3) -> Iterator[str]:
     chunks = retrieve(query, top_k=top_k)
     context = format_context(chunks)
 
@@ -29,13 +29,14 @@ CONTEXT:
 QUESTION:
 {query}"""
 
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages += history
+    messages.append({"role": "user", "content": user_message})
+
     client = get_client()
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_message},
-        ],
+        messages=messages,
         temperature=0.2,
         max_tokens=800,
         stream=True,
