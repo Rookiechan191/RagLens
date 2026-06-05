@@ -13,7 +13,7 @@ app = FastAPI(title="RAG Document Q&A")
 # Adjust allow_origins in production to your actual Vercel URL
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.environ.get("ALLOWED_ORIGINS", "*").split(","),
+    allow_origins=["https://rag-lens-ivory.vercel.app", "*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
